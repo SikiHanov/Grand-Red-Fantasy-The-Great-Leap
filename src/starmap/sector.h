@@ -10,19 +10,19 @@ public:
 	StarMap();
 	StarMap(int iSize);
 	StarMap(const StarMap &tarMap);
-	map<int,StarDomain> getMapInfo();
-	StarDomain getMapDomainInfo(int id);
+	map<int,StarSystem> getMapInfo();
+	StarSystem getMapDomainInfo(int id);
 private:
-	map<int,StarDomain> mDomainMap;
+	map<int,StarSystem> mDomainMap;
 };
 
-class StarDomain
+class StarSystem
 {
 public:
-	StarDomain();
-	StarDomain(int iSize);
-	StarDomain(const StarDomain &tarDomain);
-	map<int, StarDomain> getDomainInfo();
+	StarSystem();
+	StarSystem(int iSize);
+	StarSystem(const StarSystem &tarDomain);
+	map<int, StarSystem> getDomainInfo();
 	StarSector getDomainSectorInfo(int id);
 private:
 	map<int, StarSector> mSectorMap;
