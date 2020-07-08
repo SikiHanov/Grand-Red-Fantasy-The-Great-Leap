@@ -1,10 +1,9 @@
 #pragma once
-#include <vector>
-#include <map>
-#include <fstream>
-#include <iostream>
+#include "include.h"
 #include "build.h"
-using namespace std;
+
+//list of all AreaType
+list<unsigned int> _AreaTypeList;
 
 //Used only in AreaInitMaps
 class LandTypeInitRule
@@ -37,18 +36,26 @@ private:
 map<unsigned int, LandTypeInitRule> _AreaInitMap;
 
 //register of AreaInitMap
-bool RegisterInit()
+//$[LandTypeID] %[default BuildingChunk value] %[default IndustryChunk value] %[default NatureChunk value] %[default CurrentCapacity]
+//#[defaultBuildingID]-[defaultBuildingID] #[defaultIndustryID]-[defaultIndustryID] #[defaultNatureID]
+bool RegisterAreaInit()
 {
 	fstream AreaInitFile;
-	AreaInitFile.open("//Init//AreaInit.txt");
+	AreaInitFile.open("Init//AreaInit.txt");
 
 	string temp;
+
+	if (!AreaInitFile.is_open())
+		return false;
+
 	while (getline(AreaInitFile, temp))
 	{
 		unsigned int pBC, pIC, pNC, pCC;
 		vector<BuildingType> pSpecBC;
 		vector<IndustryType> pSpecIC;
 		vector<NatureType> pSpecNC;
+
+		//AreaTypeID
 		unsigned int pIndex;
 		
 		string tStr;
@@ -144,7 +151,7 @@ bool RegisterInit()
 				{
 					if (*current == '-')
 					{
-						pSpecBC.push_back(atoi(tStr.c_str));
+						pSpecBC.push_back(_BuildingTypeMap[atoi(tStr.c_str)]);
 						tStr.clear();
 					}
 					else
@@ -155,7 +162,7 @@ bool RegisterInit()
 				}
 
 				if(tStr.size()!=0)
-					pSpecBC.push_back(atoi(tStr.c_str));
+					pSpecBC.push_back(_BuildingTypeMap[atoi(tStr.c_str)]);
 				iter = current + 1;
 			}
 			tStr.clear();
@@ -169,7 +176,7 @@ bool RegisterInit()
 				{
 					if (*current == '-')
 					{
-						pSpecIC.push_back(atoi(tStr.c_str));
+						pSpecIC.push_back(_IndustryTypMap[atoi(tStr.c_str)]);
 						tStr.clear();
 					}
 					else
@@ -180,7 +187,7 @@ bool RegisterInit()
 				}
 
 				if (tStr.size() != 0)
-					pSpecIC.push_back(atoi(tStr.c_str));
+					pSpecIC.push_back(_IndustryTypMap[atoi(tStr.c_str)]);
 				iter = current + 1;
 			}
 			tStr.clear();
@@ -194,7 +201,7 @@ bool RegisterInit()
 				{
 					if (*current == '-')
 					{
-						pSpecNC.push_back(atoi(tStr.c_str));
+						pSpecNC.push_back(_NatureTypeMap[atoi(tStr.c_str)]);
 						tStr.clear();
 					}
 					else
@@ -205,13 +212,13 @@ bool RegisterInit()
 				}
 
 				if (tStr.size() != 0)
-					pSpecNC.push_back(atoi(tStr.c_str));
+					pSpecNC.push_back(_NatureTypeMap[atoi(tStr.c_str)]);
 				iter = current + 1;
 			}
 			tStr.clear();
 
 		}
-
+		_AreaTypeList.push_back(pIndex);
 		_AreaInitMap.insert(pair<unsigned int,LandTypeInitRule>(pIndex, LandTypeInitRule(pSpecBC,pSpecIC,pSpecNC,pBC,pIC,pNC,pCC)));
 	}
 
@@ -220,4 +227,42 @@ bool RegisterInit()
 	return true;
 }
 
-//
+//register of Building/Industry/Nature chunk
+
+
+//register of Resource
+bool RegisterResourceInit()
+{
+	fstream ResourceInitFile;
+	ResourceInitFile.open("Init//ResourceInit.txt");
+
+	if (!ResourceInitFile.is_open())
+		return false;
+
+	string temp;
+
+	while (getline(ResourceInitFile, temp))
+	{
+		unsigned int pIndex;
+		string tStr;
+
+		for (string::iterator iter = temp.begin(); iter != temp.end(); iter++)
+		{
+			//index
+			if (*iter == '$')
+			{
+				iter++;
+				auto current = iter;
+				while (*current != ' ')
+				{
+					tStr.push_back(*current);
+					current++;
+				}
+
+				pIndex = atoi(tStr.c_str());
+				iter = current + 1;
+			}
+			tStr.clear();
+		}
+	}
+}

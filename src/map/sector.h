@@ -1,15 +1,9 @@
 #pragma once
-#include <list>
-#include <map>
-#include <string>
-#include <vector>
-#include <memory>
-#include <algorithm>
+#include "include.h"
 #include "build.h"
 #include "IDconstructor.h"
 #include "population.h"
 #include "Init.h"
-using namespace std;
 
 //sector.h is mainly used to preserve geographic information
 //class: MainCity, Area, Sector, SectorMap
